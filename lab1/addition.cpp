@@ -28,10 +28,18 @@ string Add_strings(string first, string second)
 	reverse(final.begin(), final.end()); 
 	return final; 
 } 
-int main() 
-{ 
-	string first,second;
-	cin>>first>>second; 
-	cout <<Add_strings(first, second); 
-	return 0; 
-} 
+int main()
+{
+	int q;
+	cin>>q;
+	while(q--)
+	{
+		string a,b;
+		cin>>a>>b;
+		string c = Add_strings(a,b);
+		cout<<c<<"\n";
+	}
+
+	return 0;
+}
+
