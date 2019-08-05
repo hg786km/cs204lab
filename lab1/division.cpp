@@ -1,45 +1,25 @@
-
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-string addition(string first, string second) 
-{ 
 
-	if (first.length() > second.length()) 
-		swap(first, second); 
-	string final = ""; 
-	reverse(first.begin(), first.end()); 
-	reverse(second.begin(), second.end()); 
-	int carry = 0; 
-	for (int i=0; i<first.length(); i++) 
-	{ 
-		int sum = ((first[i]-'0')+(second[i]-'0')+carry); 
-		final.push_back(sum%10 + '0'); 
-		carry = sum/10; 
-	} 
-	for (int i=first.length(); i<second.length(); i++) 
-	{ 
-		int sum = ((second[i]-'0')+carry); 
-		final.push_back(sum%10 + '0'); 
-		carry = sum/10; 
-	}  
-	if (carry) 
-		final.push_back(carry+'0'); 
-	reverse(final.begin(), final.end()); 
-	return final; 
-}
+
+
+
 bool is_small(string first, string second)
 {
 	int n1 = first.length(), n2 = second.length();
 
 	if (n1 < n2)
+	return true;
+	if (n2 < n1)
+	return false;
+
+	for (int i=0; i<n1; i++)
+	if (first[i] < second[i])
 		return true;
-	else if (n2 < n1)
+	else if (first[i] > second[i])
 		return false;
-	else if((n1==n2)&&(first<second))
-		return true;
-	else
-		return false;
-	
+
+	return false;
 }
 string subtract(string first, string second)
 {
@@ -79,84 +59,122 @@ string subtract(string first, string second)
 	return final;
 }
 
-bool greaterORequal(string s1, string s2){
-    if(s2.size() < s1.size()){
-        return true;
-    }else if(s2 <= s1 && s2.size() == s1.size()){
-        return true;
-    }
-    return false;
-}
-void division(string s1, string s2){
-	if(is_small(s1,s2))
-	{
-		cout<<"0 0"<<endl;
-		return;
+
+bool is_small_or_equal(string str1, string str2) 
+{ 
+	int n1 = str1.length(), n2 = str2.length(); 
+
+	if (n1 < n2) 
+	return true; 
+	if (n2 < n1) 
+	return false; 
+
+	for (int i=0; i<n1; i++) 
+	if (str1[i] < str2[i]) 
+		return true; 
+	else if (str1[i] > str2[i]) 
+		return false; 
+
+	return true; 
+} 
+
+
+string division(string &a , string &b){
+	string ans="";
+	string zero="0";
+
+
+	if(is_small(a,b)) {
+		return zero;
 	}
-    string remainder="";
-    string answer="";
 
-    int j=0;
-    while(1){
-        string divisor=s2;
-        string dividend = remainder;
-        bool flag= false;
-        if(j == 0){
-            for(int i=j; i<s1.size(); i++){
-            dividend += s1[i];
-            if(greaterORequal(dividend, divisor)){
-                j = i+1;
-                flag = true;
-                break;
-                }
-            }
-        }
-        else{
-        for(int i=j; i<s1.size(); i++){
-            dividend += s1[i];
-            string sm="";
-            for(int k =0 ; k<dividend.size(); k++){
-                if(dividend[k] == '0' && sm == ""){
-                    continue;
-                }
-                else{sm += dividend[k];}
-            }
-            dividend = sm;
-            if(greaterORequal(dividend, divisor)){
-                j = i+1;
-                flag = true;
-                break;
-            }
-            answer += '0';
-        }}
-        if(dividend == ""){dividend = '0';}
-        //cout<<divisor<<" "<<dividend<<endl;
-        if(!flag && !greaterORequal(dividend, divisor)){
-            cout<<answer<<"\n"<<dividend<<endl;
-            return;
-        }
-        int j2=0;
-        while(greaterORequal(dividend, divisor)){
-            divisor = addition(divisor, s2);
-            j2++;
-        }
-        //cout<<divisor<<endl;
-        divisor = subtract(divisor, s2);
-        remainder = subtract(dividend, divisor);
-        if(j2 != 0){
-            answer += j2+'0';
-        }
 
-    }
+	string r=a.substr(0,b.size());
+
+	if(is_small(r,b)) {
+		r=r+a[b.size()];
+	}
+
+
+	int size1=r.size();
+
+	while(is_small_or_equal(b,r))
+	{
+
+		int i=0;
+
+		while(is_small_or_equal(b,r)){
+			
+			r=subtract(b,r);
+			
+			int count=0;
+			
+			for(int j=0;j<r.size();j++){
+				if(r[j]!='0') 
+					break;
+				else 
+					count++;
+			}
+			
+			if(count<r.size()) 
+				{r=r.substr(count,r.size()-count);}
+			else
+				{ r="";}
+			i++;
+		}
+
+		ans+=(i+'0');
+
+		if(size1>=a.size()) 
+			break;
+
+		r+=a[size1];
+
+		size1+=1;
+
+		int count=0;
+
+    	for(int j=0;j<r.size();j++){
+			if(r[j]!='0') 
+				break;
+			else 
+				count++;
+		}
+
+
+		if(count<r.size()) 
+			r=r.substr(count,r.size()-count);
+		else 
+			r="";
+
+
+		while(is_small(r,b)&&size1<a.size()){
+			r+=a[size1];
+			size1++;
+			ans+='0';
+			int count=0;
+			for(int j=0;j<r.size();j++){
+				if(r[j]!='0') break;
+				else count++;
+			}
+			if(count<r.size()) r=r.substr(count,r.size()-count);
+			else r="";
+		}
+		if(is_small(r,b)) ans+='0';
+	}
+	
+	b=r;
+	if(b.size()==0) b="0";
+	return ans;
 }
-
 int main(){
-    long long q;
-    cin>>q;
-    while(q--){
-        string s1, s2;
-        cin>>s1>>s2;
-        division(s1, s2);
-    }
 
+	int q;
+	cin>>q;
+	while(q--){
+		string a,b;
+		cin>>a>>b;
+		cout<<division(a,b)<<endl<<b<<endl;
+	}
+	return 0;
 }
