@@ -1,119 +1,133 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
 struct Node* head = NULL;
+//declaration of structure
+struct Node
+{
+    int y;
+    int x;
+    Node *next;
+};
+//Adding given element at first
+void AddFirst(int x , int y)
+{
+    Node* new_node = new Node;
 
-struct Node  
-{  
-    int y; 
-    int x;  
-    Node *next;  
-}; 
+    new_node->x  = x;
+    new_node->y  = y;
 
-void AddFirst(int x , int y) 
-{ 
-    Node* new_node = new Node; 
-   
-    new_node->x  = x; 
-    new_node->y  = y; 
-   
-    new_node->next = head; 
-   
-    head = new_node; 
-} 
+    new_node->next = head;
 
-void DelFirst() 
-{ 
-    if (head == NULL) 
+    head = new_node;
+}
+//deleting the element at first
+void DelFirst()
+{
+    if (head == NULL)
         {
-            cout<<"empty linked list";
+            cout<<"-1";
             return ;
-        } 
+        }
 
-    Node* temp = head; 
-    head = head->next; 
-  
-    free(temp); 
+    Node* temp = head;
+    head = head->next;
 
-} 
+    free(temp);
 
-void Del( int x,int y) 
-{ 
-   
-   if (head == NULL) 
-      {cout<<"empty linked list";return ;} 
-  
-    
-   Node* temp = head; 
-   Node* prev = NULL;
-     
-    if ((head->x)==x&&(head->y)==y) 
-    { 
-        head = temp->next;    
-        free(temp);              
-        return; 
-    } 
-  
-  
-    for (int i=0; temp!=NULL; i++) 
+}
+//deleting element with parameters x and y
+void Del( int x,int y)
+{
+
+   if (head == NULL)
+      {
+        cout<<"-1";
+        return ;
+      }
+
+
+   Node* temp = head;
+
+   Node* previous = NULL;
+
+    if ((head->x)==x&&(head->y)==y)
+    {
+        head = temp->next;
+        free(temp);
+        return;
+    }
+
+
+    for (int i=0; temp!=NULL; i++)
          {
              if(temp->x==x&&temp->y==y)
              {
                  break;
              }
-             prev = temp;
-             temp = temp->next; 
+             previous = temp;
+             temp = temp->next;
          }
 
-    if (temp == NULL ) 
-      {cout<<"not found";return ;} 
-  
-    struct Node *next = temp->next; 
-    free(temp);
-  
-    prev->next = next;
-} 
+    if (temp == NULL )
+      {
+        cout<<"-1 Not found";
+        return;
+    }
 
-void Search(int d) 
-{ 
-    struct Node* temp = head; 
-    while (temp!= NULL) { 
-        if((temp->x)*(temp->x)+(temp->y)*(temp->y)<=d*d)
+    struct Node *next = temp->next;
+
+    free(temp);
+
+    previous->next = next;
+}
+//seacrh elements withing the distance d
+void Search(int d)
+{
+    struct Node* temp = head;
+    int x1,y1;
+    while (temp!= NULL) {
+        x1 = temp->x;
+        y1 = temp->y;
+        if(x1*x1+y1*y1<=d*d)
         {
-            cout<<"("<<(temp->x)<<","<<(temp->y)<<")";
+            cout<<"("<<x1<<","<<y1<<")";
         }
         temp=temp->next;
-    } 
-} 
+    }
+}
+//search element with x and y parameters
+string Search(int x,int y)
+{
+    struct Node* temp = head;
 
-string Search(int x,int y) 
-{ 
-    struct Node* temp = head; 
-    while (temp!= NULL) { 
+    while (temp!= NULL) {
+
         if((temp->x)==x&&(temp->y)==y)
         {
             return "True";
         }
         temp=temp->next;
-    } 
+    }
     return "False";
 }
-
-int Length() 
-{ 
-    struct Node* temp = head; 
+//find length of the list
+int Length()
+{
+    struct Node* temp = head;
     int l=0;
-    while (temp!= NULL) { 
+    while (temp!= NULL) {
         l++;
         temp=temp->next;
-    } 
+    }
     return l;
 }
 int main()
 {
     long long int q;
     cin>>q;
- 
+
     while(q--)
     {
         int choice;
@@ -140,7 +154,7 @@ int main()
             cin>>d;
             Search(d);
             cout<<endl;
-            
+
         }
         else if(choice==5)
         {
