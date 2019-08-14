@@ -112,6 +112,21 @@ int main ()
 	while(q--)
 	{
 		cin>>s;
+		bool check1 = true ;
+		fi(s.length())
+		{
+			if(s[i]=='('||s[i]=='{'||s[i]=='['||s[i]=='<'||s[i]=='>'||s[i]==']'||s[i]=='}'||s[i]==')'||s[i]=='|')
+				{continue;}
+			else{
+				check1 = false;
+				break;
+			}
+		}
+		if(!check1)
+		{
+			cout<<"NO";
+			continue;
+		}
 		if(ParanthesisBalanced(s))
 		{
 			cout<<"YES";line
