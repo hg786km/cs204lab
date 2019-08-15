@@ -72,7 +72,7 @@ void Del( int x,int y)
 
     if (temp == NULL )
       {
-        cout<<"-1 Not found";
+        cout<<"-1";
         return;
     }
 
@@ -87,15 +87,24 @@ void Search(int d)
 {
     struct Node* temp = head;
     int x1,y1;
+    int count = 0;
     while (temp!= NULL) {
         x1 = temp->x;
         y1 = temp->y;
         if(x1*x1+y1*y1<=d*d)
         {
-            cout<<"("<<x1<<","<<y1<<")";
+            count++;
         }
         temp=temp->next;
     }
+    if(count==0)
+    {
+        cout<<"-1";
+    }
+    else
+    {
+        cout<<count;
+    }    
 }
 //search element with x and y parameters
 string Search(int x,int y)
