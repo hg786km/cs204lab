@@ -2,25 +2,12 @@
 #define lli long long int
 #define f(a, b, c) for (lli a = b; a < c; a++)
 using namespace std;
-
-
-int precedence(string c) 
-{ 
-    if(c == "^") 
-    return 3; 
-    else if(c == "*" || c == "/") 
-    return 2; 
-    else if(c == "+" || c == "-") 
-    return 1; 
-    else
-    return -1; 
-} 
-
 vector<string> sTv(string s)
 {
-    int n = s.length();
     vector<string> stv;
-    for(int i = 0; i<n;i++)
+
+    int len = s.length();
+    for(int i = 0; i<len;i++)
     {
         string temp="";
         if((s[i] >= '0' && s[i] <= '9')) 
@@ -32,6 +19,16 @@ vector<string> sTv(string s)
             }
             i = j-1;
         }
+/*        else if(s[i]=='-' and (s[i-1]=='('||i==0))
+        {
+            temp+=s[i];
+            int j = i+1;
+            for(;(s[j] >= '0' && s[j] <= '9');j++)
+            {
+                temp+=s[j];
+            }
+            i = j-1;
+        }  */
         else 
         {
             temp+=s[i];
@@ -42,6 +39,30 @@ vector<string> sTv(string s)
 
     return stv;
 }
+
+bool isoperator(char c)
+{
+  if(c=='+'||c=='-'||c=='^'||c=='*'||c=='/')
+  {
+    return true;
+  }
+  return false;
+}
+
+int precedence(string c) 
+{ 
+    if(c=="$")
+      return 4;
+    else if(c == "^") 
+    return 3; 
+    else if(c == "*" || c == "/") 
+    return 2; 
+    else if(c == "+" || c == "-") 
+    return 1; 
+    else
+    return -1; 
+} 
+
 
 
 vector<string> I2P(vector<string> s) 
@@ -55,7 +76,7 @@ vector<string> I2P(vector<string> s)
         if((s[i][0] >= '0' && s[i][0] <= '9')) 
             ns.push_back(s[i]);
         else if(s[i] == "(") 
-           st.push("("); 
+            st.push("("); 
         else if(s[i] == ")") 
         { 
             while(st.top() != "N" && st.top() != "(") 
@@ -70,7 +91,7 @@ vector<string> I2P(vector<string> s)
                 st.pop(); 
             } 
         } 
-        else{ 
+        else{
             while(st.top() != "N" && precedence(s[i]) <= precedence(st.top())) 
             { 
                 if(s[i]=="^"&&st.top()=="^") break;
@@ -106,20 +127,21 @@ mynode* ct(vector <string> PFIX)
        int i=0;
        while(i!=PFIX.size())
        {
-         if(PFIX[i]!="+" && PFIX[i]!="-" && PFIX[i]!="*" && PFIX[i]!="/" && PFIX[i]!="^")
+         if(PFIX[i]!="+" && PFIX[i]!="-" && PFIX[i]!="*" && PFIX[i]!="/" && PFIX[i]!="^" && PFIX[i]!="$")
            {
+
                  mynode *temp=(mynode *)malloc(sizeof(mynode));
 
                  temp->s=PFIX[i];
 
-                 f(j,0,PFIX[i].size())
+                 //f(j,0,PFIX[i].size())
 
-                 if(PFIX[i][j]<'0' || PFIX[i][j]>'9')return NULL;
+                 //if(PFIX[i][j]<'0' || PFIX[i][j]>'9')return NULL;
 
                  stack1.push_back(temp);
            } 
-         else
-         {
+         else if(PFIX[i]!="$")
+         { 
                if(stack1.size()<2)return NULL;
 
                mynode *s1=stack1.back();
@@ -140,23 +162,36 @@ mynode* ct(vector <string> PFIX)
 
                stack1.push_back(temp); 
          }
+         else
+         {
+                if(stack1.size()<1)return NULL;
+                mynode *s1=stack1.back();
+                stack1.pop_back();
+                mynode *temp=(mynode *)malloc(sizeof(mynode));
+                temp->myleft=s1;
+                temp->s="$";
+                stack1.push_back(temp);
+         }
          i++;
        }
-       if(stack1.size()!=1)
-            return NULL;
-       return stack1.back();
+    if(stack1.size()!=1)
+          return NULL;
+    return stack1.back();
 }
 
 
 lli evaluate(mynode *root)
 {
    string s=root->s;
+   //cout<<s<<"\n";
    lli answer=0;
-   if(s!="+" && s!="-" && s!="*" && s!="/" && s!="^")
+   if(s!="+" && s!="-" && s!="*" && s!="/" && s!="^" && s!="$")
    return stoi(s);
    else
    {
-     int lanswer=evaluate(root->myleft),ranswer=evaluate(root->myright);
+     int lanswer=evaluate(root->myleft),ranswer=0;
+     if(s!="$")
+      ranswer = evaluate(root->myright);
 
      if(s=="+")
        answer=lanswer+ranswer;
@@ -165,11 +200,22 @@ lli evaluate(mynode *root)
      else if(s=="*")
        answer=lanswer*ranswer;
      else if(s=="/")
-       answer=lanswer/ranswer;
-     else
+       {
+          if(ranswer==0)
+          {
+            answer = std::numeric_limits<lli>::max();
+          }       
+          else answer=lanswer/ranswer;
+        } 
+     else if(s=="^")
      {
        answer=1;
-       f(i,0,ranswer)answer*=lanswer;
+       if(ranswer<0) answer=0;
+       else f(i,0,ranswer)answer*=lanswer;
+     }
+     else
+     {
+       answer=-evaluate(root->myleft);
      }
    }
    return answer;
@@ -184,25 +230,48 @@ int main()
     cin>>n;
     for(lli i = 0;i<n;i++)
     {
-      string s;
+      string s,s1;
+
 
       cin>>s;
+      
 
-      vector <string> newv=sTv(s);
+     for(int i = 0; i<s.size() ; i++)
+      {
+        if(s[i]=='-')
+        {
+          if(i==0||s[i-1]=='('||isoperator(s[i-1]))
+          {
+            s1.push_back('$');
+            continue;
+          }
+        }
+        s1.push_back(s[i]);
+      }
 
+
+      vector <string> newv=sTv(s1);
+  //    std::vector<string> v = {"-3","+","5"};
       newv=I2P(newv);
-
+  //    v = I2P(v);
       mynode* root=ct(newv);
-
+      //cout<<root->s<<"\n";
       if(root!=NULL)
         {
-          cout<<evaluate(root)<<"\n";
+          if(evaluate(root)==std::numeric_limits<lli>::max())
+            cout<<"CANT BE EVALUATED\n";
+          else
+              cout<<evaluate(root)<<"\n";
         }
       else 
       {
         cout<<"CANT BE EVALUATED\n";
       }
+
     }
   }
+
+
+//  cout<<stoi("-3");
   return 0; 	
 }
