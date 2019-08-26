@@ -2,7 +2,7 @@
 
 using namespace std;
 
-struct Node* head = NULL;
+
 //declaration of structure
 struct Node
 {
@@ -10,6 +10,7 @@ struct Node
     int x;
     Node *next;
 };
+struct Node* head = NULL;
 //Adding given element at first
 void AddFirst(int x , int y)
 {
