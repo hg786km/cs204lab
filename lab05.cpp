@@ -215,14 +215,6 @@ mynode* ct(vector <string> &PFIX, vector <string> &strv2, vector <string> &strv3
         return stack1.back();
 }
 
-/*void traverse(mynode *root)
-{
-  if(root==NULL)return ;
-  cout<<root->s<<"\n";
-  traverse(root->lch);
-  traverse(root->rch);
-}*/
-
 lli evaluate(mynode *root,vector <string> &strv2, vector <string> &strv3)
 {
    string s=root->s;
