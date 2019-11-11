@@ -1,70 +1,56 @@
-#include <bits/stdc++.h>
-using namespace std;
- 
-#define ll long long
-typedef pair<int, int> iPair;  
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <functional>
+#include <utility>
 
-void prim(vector<pair<ll,ll> > adjlist[], ll n)
+using namespace std;
+const int MAX = 1e4 + 5;
+typedef pair<long long, int> PII;
+bool marked[MAX];
+vector <PII> adj[MAX];
+
+long long prim(int x)
 {
-    ll weight[n];
-    ll parent[n];
-    int visited[n] = {0};
-    for(ll i=0;i<n;i++)
+    priority_queue<PII, vector<PII>, greater<PII> > Q;
+    int y;
+    long long minimumCost = 0;
+    PII p;
+    Q.push(make_pair(0, x));
+    while(!Q.empty())
     {
-        weight[i] = INT_MAX;
-        parent[i] = -1;
-    }
-    // starting vertex is 0
-    parent[0] = 0;
-    weight[0] = 0;
-    // min heap
-    priority_queue< iPair, vector <iPair> , greater<iPair> > pq; // (weight,source)
-    pq.push(make_pair(0,0));
-    
-    while(!pq.empty())
-    {
-        ll cv = pq.top().second;
-        ll cvw = pq.top().first;
-        pq.pop();
-        visited[cv] = 1;
-        for(ll i=0;i<adjlist[cv].size();i++)
+        // Select the edge with minimum weight
+        p = Q.top();
+        Q.pop();
+        x = p.second;
+        // Checking for cycle
+        if(marked[x] == true)
+            continue;
+        minimumCost += p.first;
+        marked[x] = true;
+        for(int i = 0;i < adj[x].size();++i)
         {
-            ll ng = adjlist[cv][i].first;
-            ll ngw = adjlist[cv][i].second;
-            if(!visited[ng] && weight[ng]>ngw)
-            {
-                weight[ng] = ngw;
-                pq.push(make_pair(ngw,ng));
-                parent[ng] = cv;
-            }
+            y = adj[x][i].second;
+            if(marked[y] == false)
+                Q.push(adj[x][i]);
         }
     }
-    for(ll i=1;i<n;i++)
-    {
-        cout<<i<<" "<<parent[i]<<" "<<weight[i]<<endl;
-    }
-    
-    
+    return minimumCost;
 }
- 
+
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    
-    ll v,e;
-    cin>>v>>e;
-    vector<pair<ll,ll> > adjlist[v];
-    for(ll i=0;i<e;i++)
+    int nodes, edges, x, y;
+    long long weight, minimumCost;
+    cin >> nodes >> edges;
+    for(int i = 0;i < edges;++i)
     {
-        ll x,y,w;
-        cin>>w>>x>>y;
-        adjlist[x].push_back(make_pair(y,w));
-        adjlist[y].push_back(make_pair(x,w));
+        cin >> x >> y >> weight;
+        adj[x].push_back(make_pair(weight, y));
+        adj[y].push_back(make_pair(weight, x));
     }
-    
-    prim(adjlist,v);
-    
+    // Selecting 1 as the starting node
+    minimumCost = prim(1);
+    cout << minimumCost << endl;
     return 0;
 }
