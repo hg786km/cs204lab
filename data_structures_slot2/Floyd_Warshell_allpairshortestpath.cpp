@@ -20,7 +20,7 @@ int main()
     {
         for(ll j=0;j<v;j++)
         {
-            if(i==j){a[i][j]=0;continue;}
+            if(i==j){a[i][j]=0;adjmatrix[i][j] = 0;continue;}
             a[i][j] = INT_MAX;
             adjmatrix[i][j] = 0;
         }
