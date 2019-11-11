@@ -16,7 +16,7 @@ struct node
     ll rank;
 };
 
-bool comapre(kruskal a, kruskal b)
+bool compare(kruskal a, kruskal b)
 {
     return a.w < b.w;
 }
@@ -92,7 +92,7 @@ int main()
     {
         cin>>edges[i].w>>edges[i].x>>edges[i].y;
     }
-    sort(edges,edges+e,comapre);
+    sort(edges,edges+e,compare);
     mstkruskal(edges,e,mst,v);
     for(ll i=0;i<mst.size();i++)
     {
